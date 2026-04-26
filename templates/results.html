@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results - AI Interviewer</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">AI Interviewer</div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="results.html" class="active">Results</a>
+                <a href="myinterviews.html">My Interviews</a>
+                <a href="profile.html">Profile</a>
+                <a href="#login" class="btn-primary">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="results-header" style="margin-bottom: 2rem;">
+            <h1 style="font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, var(--purple-dark), var(--blue-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Interview Results</h1>
+            <p style="color: var(--text-secondary);">Detailed feedback and insights</p>
+        </div>
+
+        <div class="results-container fade-up">
+            <div style="background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--shadow-md);">
+                <h2 style="font-size: 1.5rem; margin-bottom: 2rem; color: var(--text-primary); text-align: center;">Overall Performance</h2>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
+                    <div class="score-circle" style="width: 250px; height: 250px;">
+                        82%
+                    </div>
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <h3 style="font-size: 1.5rem; color: var(--text-primary);">Strong Performance</h3>
+                    <p style="color: var(--text-secondary); max-width: 500px; text-align: center;">Great job demonstrating your technical skills and communication abilities. Keep up the excellent work!</p>
+                </div>
+            </div>
+
+            <div class="breakdown-bars fade-up delay-1" style="margin-top: 2rem;">
+                <h3 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-primary);">Detailed Breakdown</h3>
+                <div class="bar-item">
+                    <span>Communication</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 85%;"></div>
+                    </div>
+                </div>
+                <div class="bar-item">
+                    <span>Technical Skills</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 92%;"></div>
+                    </div>
+                </div>
+                <div class="bar-item">
+                    <span>Confidence</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 78%;"></div>
+                    </div>
+                </div>
+                <div class="bar-item">
+                    <span>Problem Solving</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 88%;"></div>
+                    </div>
+                </div>
+                <div class="bar-item">
+                    <span>Time Management</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 71%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-container fade-up delay-2" style="margin-top: 2rem;">
+            <div style="background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--shadow-md);">
+                <h3 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-primary);">Strengths</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div style="background: rgba(40, 167, 69, 0.1); border-radius: var(--radius-lg); padding: 1.5rem;">
+                        <h4 style="color: #28a745; margin-bottom: 0.5rem;"><i class="fas fa-check-circle"></i> Clear Explanation</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;">Articulated complex concepts in a simple, understandable manner.</p>
+                    </div>
+                    <div style="background: rgba(40, 167, 69, 0.1); border-radius: var(--radius-lg); padding: 1.5rem;">
+                        <h4 style="color: #28a745; margin-bottom: 0.5rem;"><i class="fas fa-check-circle"></i> Good Examples</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;">Provided relevant and practical examples that demonstrated understanding.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--shadow-md); margin-top: 2rem;">
+                <h3 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-primary);">Areas to Improve</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div style="background: rgba(255, 193, 7, 0.1); border-radius: var(--radius-lg); padding: 1.5rem;">
+                        <h4 style="color: #ffc107; margin-bottom: 0.5rem;"><i class="fas fa-exclamation-circle"></i> Time Management</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;">Practice structuring answers within time limits to improve efficiency.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fade-up delay-3" style="margin-top: 2rem; text-align: center;">
+            <a href="dashboard.html" class="btn-primary">
+                <img src="{% static 'images/download.webp' %}" alt="Download" style="width: 20px; height: 20px; margin-right: 8px; vertical-align: middle;">
+                Download Report
+            </a>
+            <button style="background: transparent; border: 2px solid var(--purple-medium); color: var(--purple-medium); padding: 12px 32px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: var(--transition); margin-left: 1rem;">
+                <i class="fas fa-redo"></i> Retake Interview
+            </button>
+        </div>
+
+        <div class="fade-up delay-1" style="margin-top: 3rem;">
+            <h3 style="font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--text-primary);">All Interviews</h3>
+            <div class="table-container">
+                <table class="interview-table">
+                    <thead>
+                        <tr>
+                            <th>Interview Name</th>
+                            <th>Date</th>
+                            <th>Duration</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Software Engineer - Backend</td>
+                            <td>2026-04-20</td>
+                            <td>45 min</td>
+                            <td>85%</td>
+                            <td><span style="color: #28a745; font-weight: 600;">Completed</span></td>
+                            <td><button class="view-report-btn"><i class="fas fa-eye"></i> View</button></td>
+                        </tr>
+                        <tr>
+                            <td>Product Manager - Tech</td>
+                            <td>2026-04-18</td>
+                            <td>60 min</td>
+                            <td>78%</td>
+                            <td><span style="color: #28a745; font-weight: 600;">Completed</span></td>
+                            <td><button class="view-report-btn"><i class="fas fa-eye"></i> View</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 AI Interviewer. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

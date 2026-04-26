@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Results{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h2 class="text-center mb-4">Interview Complete!</h2>
+            
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-body text-center">
+                    <div class="score-circle mx-auto mb-4" style="width: 200px; height: 200px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 180px; height: 180px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                            <span class="display-4 fw-bold" style="color: #333;">{{ total_score|floatformat:0 }}%</span>
+                            <small class="text-muted">Total Score</small>
+                        </div>
+                    </div>
+                    
+                    <h3 class="mb-3">{{ recommendation }}</h3>
+                    <div class="alert alert-info">{{ mode_verification }}</div>
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Question Breakdown</h5>
+                </div>
+                <div class="card-body">
+                    {% for qs in question_scores %}
+                    <div class="question-score-item mb-3 p-3 rounded" style="background: #f8f9fa;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="mb-0 flex-grow-1">{{ qs.question }}</p>
+                            <span class="badge bg-{% if qs.score >= 70 %}success{% elif qs.score >= 50 %}warning{% else %}danger{% endif %}">
+                                {{ qs.score|floatformat:0 }}%
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="{% url 'index' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-redo me-2"></i> Practice Again
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.question-score-item {
+    border-left: 4px solid #667eea;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,20 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fa709a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fee140;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#grad5)"/>
+  <!-- Trophy -->
+  <rect x="180" y="150" width="40" height="60" fill="#ffd700" stroke="#333" stroke-width="2"/>
+  <rect x="170" y="140" width="60" height="20" fill="#ffd700" stroke="#333" stroke-width="2"/>
+  <circle cx="200" cy="170" r="15" fill="#ffffff"/>
+  <!-- Stars -->
+  <polygon points="150,100 155,115 170,115 160,125 165,140 150,130 135,140 140,125 125,115 140,115" fill="#ffffff"/>
+  <polygon points="250,80 255,95 270,95 260,105 265,120 250,110 235,120 240,105 225,95 240,95" fill="#ffffff"/>
+  <!-- Success text -->
+  <text x="200" y="230" text-anchor="middle" fill="#ffffff" font-size="20" font-family="Arial">Career Success</text>
+  <text x="200" y="255" text-anchor="middle" fill="#ffffff" font-size="16" font-family="Arial">Dream Job Achieved</text>
+  <text x="200" y="275" text-anchor="middle" fill="#ffffff" font-size="14" font-family="Arial">Through AI Interview</text>
+</svg>

@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - AI Interviewer{% endblock %}
+
+{% block extra_head %}
+<style>
+    .dashboard-wrapper {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    .dashboard-content {
+        flex: 1;
+        padding: 2rem;
+        padding-top: 100px;
+        overflow-y: auto;
+    }
+
+    .dashboard-header {
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-header p {
+        color: var(--gray);
+        font-size: 1rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--bg-secondary);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        border-left: 4px solid var(--primary);
+        transition: var(--transition);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow);
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--gray);
+        font-weight: 500;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .dashboard-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 2rem;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .interview-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .interview-table th {
+        background: var(--bg);
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--dark);
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+    }
+
+    .interview-table td {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border-light);
+        vertical-align: middle;
+        color: var(--dark);
+    }
+
+    .interview-table tbody tr:hover {
+        background: rgba(99, 102, 241, 0.02);
+    }
+
+    .view-report-btn {
+        background: var(--gradient);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .view-report-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-content">
+    <div class="dashboard-header">
+        <div>
+            <h1>Dashboard Overview</h1>
+            <p>Track your interview progress and performance</p>
+        </div>
+        <img src="{% static 'images/ai-interview-success.svg' %}"
+             alt="AI Assistant"
+             style="max-width: 200px; height: auto; border-radius: 16px; box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);">
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_interviews }}</div>
+            <div class="stat-label">Interviews Taken</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ avg_score }}%</div>
+            <div class="stat-label">Avg Score</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ total_questions }}</div>
+            <div class="stat-label">Questions Answered</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ current_streak }}</div>
+            <div class="stat-label">Current Streak</div>
+        </div>
+    </div>
+
+    <!-- Performance Chart -->
+    <div class="dashboard-section">
+        <h2 class="mb-4" style="font-size: 1.5rem; color: var(--dark);">Performance Overview</h2>
+        <canvas id="performanceChart" width="400" height="200" style="width: 100%; height: 300px;"></canvas>
+    </div>
+
+    <!-- Recent Interviews -->
+    <div class="dashboard-section">
+        <h2 class="mb-4" style="font-size: 1.5rem; color: var(--dark);">Recent Interviews</h2>
+        <div class="table-container">
+            <table class="interview-table">
+                <thead>
+                    <tr>
+                        <th>Interview Name</th>
+                        <th>Date</th>
+                        <th>Duration</th>
+                        <th>Score</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for interview in recent_interviews %}
+                    <tr>
+                        <td>Interview Session {{ interview.session_id }}</td>
+                        <td>{{ interview.created_at|date:"Y-m-d" }}</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td><span style="color: var(--success); font-weight: 600;">Completed</span></td>
+                        <td>
+                            <a href="{% url 'result' %}" class="view-report-btn">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">No interviews yet. <a href="{% url 'permission' %}">Start your first interview</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="dashboard-section">
+        <h3 class="mb-4" style="font-size: 1.25rem; color: var(--dark);">Quick Actions</h3>
+        <div class="d-flex gap-3 flex-wrap">
+            <a href="{% url 'permission' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i> Start New Interview
+            </a>
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-redo me-2"></i> Refresh Dashboard
+            </a>
+            <a href="{% url 'profile' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-cog me-2"></i> Settings
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Performance Chart Drawing
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('performanceChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+
+        const width = rect.width;
+        const height = rect.height;
+
+        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+        ctx.fillRect(0, 0, width, height);
+
+        // Grid lines
+        ctx.strokeStyle = '#e9ecef';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 4; i++) {
+            const y = (height / 4) * i;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(width, y);
+            ctx.stroke();
+        }
+
+        // Chart data
+        const data = [30, 45, 60, 75, 82, 78, 92];
+        const points = data.map((value, index) => ({
+            x: (width / (data.length - 1)) * index,
+            y: height - (value / 100) * height
+        }));
+
+        // Line gradient
+        const gradient = ctx.createLinearGradient(0, 0, width, 0);
+        gradient.addColorStop(0, '#b584e5');
+        gradient.addColorStop(1, '#d0e8ff');
+
+        // Draw line
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Fill area under line
+        ctx.lineTo(points[points.length - 1].x, height);
+        ctx.lineTo(points[0].x, height);
+        ctx.closePath();
+        const fillGradient = ctx.createLinearGradient(0, 0, 0, height);
+        fillGradient.addColorStop(0, 'rgba(181, 136, 229, 0.3)');
+        fillGradient.addColorStop(1, 'rgba(208, 232, 255, 0.3)');
+        ctx.fillStyle = fillGradient;
+        ctx.fill();
+
+        // Points
+        points.forEach(point => {
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#4f46e5';
+            ctx.fill();
+        });
+    });
+</script>
+{% endblock %}

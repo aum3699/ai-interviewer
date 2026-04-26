@@ -1,0 +1,61 @@
+{% load static %}
+
+<!-- Main Navigation -->
+<nav class="navbar navbar-expand-lg glass-nav fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <i class="fas fa-robot"></i> AI Interviewer
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+             <ul class="navbar-nav align-items-center gap-3">
+                 <li class="nav-item">
+                     <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
+                         href="{% url 'index' %}">Home</a>
+                 </li>
+                 {% if user.is_authenticated %}
+                 <li class="nav-item">
+                     <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                         href="{% url 'dashboard' %}">Dashboard</a>
+                 </li>
+                 <li class="nav-item">
+                     <a class="nav-link {% if request.resolver_match.url_name == 'myinterviews' %}active{% endif %}"
+                         href="{% url 'myinterviews' %}">My Interviews</a>
+                 </li>
+                 <li class="nav-item">
+                     <a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                         href="{% url 'profile' %}">Profile</a>
+                 </li>
+                 {% endif %}
+                 <li class="nav-item">
+                     {% if user.is_authenticated %}
+                     <a class="btn btn-sm btn-outline-light" href="{% url 'logout' %}">
+                         <i class="fas fa-sign-out-alt me-1"></i> Logout
+                     </a>
+                     {% else %}
+                     <a class="btn btn-sm btn-primary" href="{% url 'permission' %}">
+                         <i class="fas fa-play me-1"></i> Start
+                     </a>
+                     {% endif %}
+                 </li>
+                 {% if not user.is_authenticated %}
+                 <li class="nav-item">
+                     <a class="btn btn-sm btn-outline-light" href="{% url 'login' %}">
+                         <i class="fas fa-sign-in-alt me-1"></i> Login
+                     </a>
+                 </li>
+                 <li class="nav-item">
+                     <a class="btn btn-sm btn-primary" href="{% url 'register' %}">
+                         <i class="fas fa-user-plus me-1"></i> Register
+                     </a>
+                 </li>
+                 {% endif %}
+             </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,67 @@
+{% load static %}
+
+<!-- Hero Section -->
+<div class="hero-section min-vh-100 d-flex align-items-center">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-3 fw-bold mb-4">
+                    Master Your Interview Skills with <span style="background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AI Power</span>
+                </h1>
+                <p class="lead mb-4" style="opacity: 0.9;">
+                    Practice with real-time AI analysis of your face, voice, and answers.<br>
+                    Get personalized feedback and improve your interview performance.
+                </p>
+                     <div class="d-flex gap-3">
+                        {% if not user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4">
+                            <i class="fas fa-user-plus me-2"></i> Create Account
+                        </a>
+                        <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4">
+                            <i class="fas fa-sign-in-alt me-2"></i> Login
+                        </a>
+                        {% else %}
+                        <a href="{% url 'permission' %}" class="btn btn-light btn-lg px-4">
+                            <i class="fas fa-play me-2"></i> Start Practice
+                        </a>
+                        <a href="{% url 'resume_upload' %}" class="btn btn-outline-light btn-lg px-4">
+                            <i class="fas fa-upload me-2"></i> Upload Resume
+                        </a>
+                        {% endif %}
+                    </div>
+
+                <!-- Features Grid -->
+                <div class="row mt-5 g-4">
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <i class="fas fa-brain fa-2x mb-3"></i>
+                            <h5>AI Analysis</h5>
+                            <p class="small">Face, voice & answers</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <i class="fas fa-chart-line fa-2x mb-3"></i>
+                            <h5>Real-time Feedback</h5>
+                            <p class="small">Instant metrics</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <i class="fas fa-sliders-h fa-2x mb-3"></i>
+                            <h5>3 Modes</h5>
+                            <p class="small">Easy/Medium/Hard</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 text-center hero-illustration">
+                <img src="{% static 'images/robot-interviewer.svg' %}"
+                     alt="AI Robot"
+                     class="img-fluid"
+                     style="max-width: 100%; height: auto;">
+            </div>
+        </div>
+    </div>
+</div>

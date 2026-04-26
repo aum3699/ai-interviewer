@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - AI Interviewer{% endblock %}
+
+{% block extra_head %}
+<style>
+    .profile-header {
+        background: var(--gradient);
+        color: white;
+        padding: 3rem 2rem;
+        border-radius: var(--radius-lg);
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        border: 4px solid white;
+    }
+
+    .profile-form {
+        background: var(--bg-secondary);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .profile-form h3,
+    .profile-form h5 {
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        transition: var(--transition);
+        background: var(--bg-secondary);
+        color: var(--dark);
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        outline: none;
+    }
+
+    .toggle-switch {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .toggle-switch:last-child {
+        border-bottom: none;
+    }
+
+    .toggle-label {
+        flex: 1;
+    }
+
+    .toggle-label .name {
+        font-weight: 600;
+        color: var(--dark);
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .toggle-label .desc {
+        color: var(--gray);
+        font-size: 0.85rem;
+    }
+
+    .toggle {
+        width: 50px;
+        height: 28px;
+        background: var(--gray-light);
+        border-radius: 50px;
+        position: relative;
+        cursor: pointer;
+        transition: var(--transition);
+        flex-shrink: 0;
+    }
+
+    .toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 24px;
+        height: 24px;
+        background: white;
+        border-radius: 50%;
+        transition: var(--transition);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle input:checked + .toggle-slider {
+        left: 24px;
+    }
+
+    .toggle input:checked ~ .toggle-bg {
+        background: var(--primary);
+    }
+
+    .toggle-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 50px;
+        background: var(--gray-light);
+        transition: var(--transition);
+    }
+
+    .btn-save {
+        background: var(--gradient);
+        color: white;
+        border: none;
+        padding: 12px 32px;
+        border-radius: var(--radius);
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 1rem;
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 100px;">
+    <!-- Header -->
+    <div class="profile-header">
+        <div class="profile-avatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <h1>Profile Settings</h1>
+        <p>Manage your account and preferences</p>
+    </div>
+
+    <!-- Profile Form -->
+    <div class="profile-form">
+        <h3>Personal Information</h3>
+
+        <form id="profileForm" method="POST">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" class="form-control" id="name" name="name"
+                               value="{{ user_name|default:'John Doe' }}" placeholder="Enter your full name">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email"
+                               value="{{ user_email|default:'john@example.com' }}" placeholder="Enter your email">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="profession">Profession</label>
+                        <input type="text" class="form-control" id="profession" name="profession"
+                               value="{{ profession|default:'Software Engineer' }}" placeholder="Enter your profession">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" class="form-control" id="experience" name="experience"
+                               value="{{ experience|default:3 }}" placeholder="Enter years of experience" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="mt-4">Preferences</h3>
+
+            <div class="toggle-switch">
+                <div class="toggle-label">
+                    <span class="name">Enable Camera Usage</span>
+                    <span class="desc">Allow camera access for facial expression analysis</span>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" name="camera_enabled" checked>
+                    <span class="toggle-bg"></span>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-switch">
+                <div class="toggle-label">
+                    <span class="name">Enable Microphone Usage</span>
+                    <span class="desc">Allow microphone for voice analysis</span>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" name="mic_enabled" checked>
+                    <span class="toggle-bg"></span>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-switch">
+                <div class="toggle-label">
+                    <span class="name">Voice Feedback During Interview</span>
+                    <span class="desc">Get real-time voice cues and feedback</span>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" name="voice_feedback" checked>
+                    <span class="toggle-bg"></span>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-switch">
+                <div class="toggle-label">
+                    <span class="name">Email Notifications</span>
+                    <span class="desc">Receive updates about your progress</span>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" name="email_notifications">
+                    <span class="toggle-bg"></span>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <h3 class="mt-4">Change Password</h3>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" class="form-control" id="currentPassword" name="current_password"
+                               placeholder="Enter current password">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" name="new_password"
+                               placeholder="Enter new password">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
+                               placeholder="Confirm new password">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save me-2"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('profileForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const newPass = document.getElementById('newPassword').value;
+    const confirmPass = document.getElementById('confirmPassword').value;
+
+    if (newPass && newPass !== confirmPass) {
+        alert('New passwords do not match!');
+        return;
+    }
+
+    // Here you would submit via AJAX or POST to backend
+    alert('Profile saved successfully! (Demo)');
+});
+</script>
+{% endblock %}

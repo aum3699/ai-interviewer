@@ -1,0 +1,21 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#grad3)"/>
+  <!-- Monitor -->
+  <rect x="120" y="80" width="160" height="120" rx="8" fill="#ffffff" stroke="#333" stroke-width="2"/>
+  <rect x="140" y="100" width="120" height="80" fill="#000033"/>
+  <!-- Code lines -->
+  <text x="150" y="120" fill="#00ff00" font-size="12" font-family="monospace">&lt;div&gt;Interview&lt;/div&gt;</text>
+  <text x="150" y="140" fill="#00ff00" font-size="12" font-family="monospace">function assess() {</text>
+  <text x="150" y="160" fill="#00ff00" font-size="12" font-family="monospace">  return result;</text>
+  <text x="150" y="180" fill="#00ff00" font-size="12" font-family="monospace">}</text>
+  <!-- Keyboard -->
+  <rect x="100" y="220" width="200" height="40" rx="5" fill="#666"/>
+  <text x="200" y="245" text-anchor="middle" fill="#ffffff" font-size="12" font-family="Arial">QWERTY</text>
+  <text x="200" y="270" text-anchor="middle" fill="#ffffff" font-size="18" font-family="Arial">Tech Interview</text>
+</svg>

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Permissions - AI Interviewer{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5 text-center">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">
+                        <i class="fas fa-camera"></i>
+                        <i class="fas fa-microphone ms-3"></i>
+                    </div>
+                    
+                    <h3 class="mb-3">Camera & Microphone Access</h3>
+                    <p class="text-muted mb-4">
+                        Grant camera and microphone access to enable video and audio analysis during your interview.
+                    </p>
+                    
+                    <div class="text-start mb-4">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Facial expressions & eye contact analysis</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Voice clarity & stress level detection</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Enhanced answer quality assessment</li>
+                        </ul>
+                    </div>
+                    
+                    <form id="permissionForm" method="post" action="{% url 'permission' %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="permissionStatusInput" name="permission_status" value="">
+                        <button type="button" id="grantBtn" class="btn btn-success btn-lg me-3">
+                            <i class="fas fa-check me-2"></i> Grant Access
+                        </button>
+                        <a href="/resume/" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times me-2"></i> Skip for Now
+                        </a>
+                    </form>
+                    
+                    <div id="permissionStatus" class="mt-3" style="display: none;">
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i> Permissions granted! Redirecting...
+                        </div>
+                    </div>
+                    
+                    <div id="permissionError" class="mt-3" style="display: none;">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i> 
+                            Cannot access camera/microphone. You can still complete the interview without video and audio analysis.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Permission handling
+document.getElementById('grantBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('grantBtn');
+    const statusDiv = document.getElementById('permissionStatus');
+    const errorDiv = document.getElementById('permissionError');
+    const input = document.getElementById('permissionStatusInput');
+
+    if (btn.disabled) return;
+
+    statusDiv.style.display = 'none';
+    errorDiv.style.display = 'none';
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Requesting Access...';
+
+    // Browser support check
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Browser not supported");
+        return;
+    }
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true
+        });
+
+        // Stop stream
+        stream.getTracks().forEach(track => track.stop());
+
+        input.value = 'granted';
+
+        statusDiv.style.display = 'block';
+        btn.innerHTML = '<i class="fas fa-check me-2"></i> Access Granted!';
+
+        setTimeout(() => {
+            document.getElementById('permissionForm').submit();
+        }, 1500);
+
+    } catch(e) {
+        console.error(e);
+
+        input.value = 'denied';
+
+        errorDiv.innerHTML = `
+        <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        ${e.name}: ${e.message}
+        </div>`;
+        errorDiv.style.display = 'block';
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check me-2"></i> Try Again';
+
+        setTimeout(() => {
+            document.getElementById('permissionForm').submit();
+        }, 3000);
+    }
+});
+</script>
+{% endblock %}

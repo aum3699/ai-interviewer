@@ -1,0 +1,439 @@
+{% extends 'base.html' %}
+
+{% block title %}Interview - AI Interviewer{% endblock %}
+
+{% block content %}
+    {% if not current_question %}
+    <div class="container mt-5">
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">Interview Complete!</h4>
+            <p>All questions have been answered. <a href="{% url 'result' %}">View Results</a></p>
+        </div>
+    </div>
+    {% else %}
+    <!-- Permission Overlay -->
+    {% if not permissions_granted %}
+    <div id="permOverlay" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style="background: rgba(0,0,0,0.95); z-index: 9999;">
+        <button id="closeOverlay" class="position-absolute top-0 end-0 m-3 btn btn-link text-white p-0" style="font-size: 2rem; line-height: 1;" aria-label="Close">&times;</button>
+        <div class="text-center text-white p-5">
+            <i class="fas fa-camera fa-4x mb-4" style="color: #667eea;"></i>
+            <h2>Camera & Microphone Access Required</h2>
+            <p class="text-muted mb-4">AI Interviewer needs access to analyze your expressions and voice.</p>
+            <button id="permBtn" class="btn btn-lg" style="background: #667eea; color: white;">
+                <i class="fas fa-check me-2"></i> Grant Access
+            </button>
+            <div class="mt-3">
+                <button id="skipBtn" class="btn btn-outline-light btn-sm">
+                    <i class="fas fa-forward me-2"></i> Skip for Now
+                </button>
+            </div>
+            <p class="mt-3 small text-muted"><i class="fas fa-shield-alt"></i> Your data stays on your device</p>
+        </div>
+    </div>
+    {% endif %}
+
+<div class="container-fluid px-4 py-4">
+    <!-- Progress Bar -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="progress" style="height: 8px;">
+                <div class="progress-bar" style="width: {{ progress }}%; background: var(--gradient);"></div>
+            </div>
+            <small class="text-muted">Question {{ current_index|add:1 }}/{{ total_questions }} | Mode: {{ mode|upper }}</small>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Camera Section -->
+        <div class="col-lg-5">
+            <div class="card border-0">
+                <div class="card-header" style="background: var(--gradient); color: white;">
+                    <h5 class="mb-0"><i class="fas fa-video me-2"></i> Camera & Mic</h5>
+                </div>
+                <div class="card-body p-0" style="background: #1e293b;">
+                    <!-- Video Feed -->
+                    <video id="videoEl" autoplay playsinline muted style="width: 100%; height: 280px; object-fit: cover; display: block; background: #000;"></video>
+                    <canvas id="canvasEl" style="display: none;"></canvas>
+                </div>
+                <div class="card-footer" style="background: #f8fafc;">
+                    <div class="row text-center">
+                        <div class="col-4"><span id="eyeStat" class="d-block fw-bold">--</span><small>Eye</small></div>
+                        <div class="col-4"><span id="emotionStat" class="d-block fw-bold">--</span><small>Emotion</small></div>
+                        <div class="col-4"><span id="stressStat" class="d-block fw-bold">--</span><small>Stress</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3 text-center">
+                <button id="camBtn" class="btn btn-success" disabled>
+                    <i class="fas fa-power-off me-2"></i> Start Camera
+                </button>
+                <span id="camMsg" class="ml-2"></span>
+            </div>
+        </div>
+
+        <!-- Question Section -->
+        <div class="col-lg-7">
+            <div class="card border-0 h-100">
+                <div class="card-header" style="background: var(--gradient); color: white;">
+                    <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i> Question</h5>
+                </div>
+                <div class="card-body">
+                    <div class="question-container mb-4">
+                        <h4 id="questionText">{{ current_question.question_text }}</h4>
+                    </div>
+                    
+                    <div class="text-center mb-4">
+                        <div id="timerDisplay" style="font-size: 2.5rem; font-weight: 700;">00:00</div>
+                        <small class="text-muted">seconds</small>
+                    </div>
+                    
+                    <!-- Answer Input -->
+                    <h6><i class="fas fa-pen me-2"></i> Type Your Answer:</h6>
+                    <textarea id="answerInput" class="form-control mb-3" rows="5" placeholder="Type your answer here (minimum 5 words)"></textarea>
+                    
+                    <div class="d-flex gap-2">
+                        <button id="submitBtn" class="btn btn-primary flex-grow-1 btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i> Submit Answer
+                        </button>
+                    </div>
+                    <div id="msgArea" class="mt-2 text-center"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Scores -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0">
+                <div class="card-header" style="background: var(--gradient); color: white;">
+                    Live Scores
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Relevance</label>
+                            <div class="progress"><div id="relBar" class="progress-bar bg-success" style="width: 0%"></div></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Length</label>
+                            <div class="progress"><div id="lenBar" class="progress-bar bg-primary" style="width: 0%"></div></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Quality</label>
+                            <div class="progress"><div id="qualBar" class="progress-bar bg-info" style="width: 0%"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Settings
+{% if current_question %}
+let qId = {{ current_question.id }};
+{% else %}
+let qId = null;
+{% endif %}
+const sessId = "{{ session_id }}";
+const modeStr = "{{ mode }}";
+let timeLeft = modeStr === 'easy' ? 60 : modeStr === 'medium' ? 45 : 30;
+let camStream = null;
+let timerId = null;
+let captureInterval = null;
+let frames = [];
+
+// Frame Capture
+function startFrameCapture() {
+    if (captureInterval) clearInterval(captureInterval);
+    frames = []; // Reset frames for current question
+    const video = document.getElementById('videoEl');
+    const canvas = document.getElementById('canvasEl');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 160;
+    canvas.height = 120;
+    let frameCount = 0;
+    captureInterval = setInterval(() => {
+        if (video.readyState >= 2) { // HAVE_CURRENT_DATA
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/jpeg', 0.5);
+            frames.push({
+                frame_number: frameCount++,
+                image: imageData,
+                timestamp: Date.now()
+            });
+            // Keep only last 20 frames to limit payload size
+            if (frames.length > 20) frames.shift();
+        }
+    }, 1000); // Capture 1 frame per second
+}
+
+// Permission Handling
+const permOverlay = document.getElementById('permOverlay');
+const permBtn = document.getElementById('permBtn');
+const camBtn = document.getElementById('camBtn');
+
+// Grant Access - Request camera/mic
+permBtn.addEventListener('click', async () => {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: 640, height: 480, facingMode: 'user' },
+            audio: true
+        });
+        document.getElementById('videoEl').srcObject = stream;
+        camStream = stream;
+        startFrameCapture();
+        permOverlay.style.display = 'none';
+        camBtn.disabled = false;
+        runTimer(); // Start timer after granting permission
+    } catch(e) {
+        alert('Cannot access camera/microphone: ' + e.message + '\n\nYou can still complete the interview without video/audio analysis by clicking "Skip".');
+    }
+});
+
+// Skip camera access entirely
+document.getElementById('skipBtn').addEventListener('click', () => {
+    permOverlay.style.display = 'none';
+    camBtn.disabled = true;
+    const msg = document.getElementById('camMsg');
+    if (msg) {
+        msg.innerHTML = '<span class="text-warning">Camera skipped. You can still complete the interview without video analysis.</span>';
+    }
+    runTimer(); // Start timer even without camera
+});
+
+// Close overlay (X button)
+document.getElementById('closeOverlay').addEventListener('click', () => {
+    permOverlay.style.display = 'none';
+    camBtn.disabled = true;
+    const msg = document.getElementById('camMsg');
+    if (msg) {
+        msg.innerHTML = '<span class="text-warning">Camera skipped. You can still complete the interview without video analysis.</span>';
+    }
+    runTimer();
+});
+
+// Click on overlay background to dismiss
+permOverlay.addEventListener('click', (e) => {
+    if (e.target === permOverlay) {
+        permOverlay.style.display = 'none';
+        camBtn.disabled = true;
+        const msg = document.getElementById('camMsg');
+        if (msg) {
+            msg.innerHTML = '<span class="text-warning">Camera skipped. You can still complete the interview without video analysis.</span>';
+        }
+        runTimer();
+    }
+});
+
+// Auto-initialize camera if permissions were granted on permission page
+// Run immediately when script loads
+(async () => {
+    {% if permissions_granted %}
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: 640, height: 480, facingMode: 'user' },
+            audio: true
+        });
+        document.getElementById('videoEl').srcObject = stream;
+        camStream = stream;
+        startFrameCapture();
+        const camBtn = document.getElementById('camBtn');
+        camBtn.disabled = false;
+        camBtn.innerHTML = '<i class="fas fa-check"></i> Active';
+        camBtn.classList.remove('btn-success');
+        camBtn.classList.add('btn-outline-success');
+        document.getElementById('camMsg').innerHTML = '<span class="text-success">Camera active</span>';
+    } catch(e) {
+        console.error('Auto camera init failed:', e);
+        document.getElementById('camMsg').innerHTML = '<span class="text-warning">Camera access failed. You can still complete the interview without video analysis.</span>';
+    }
+    {% endif %}
+    runTimer(); // Start timer automatically
+})();
+
+// Press Escape to dismiss
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && permOverlay.style.display !== 'none') {
+        permOverlay.style.display = 'none';
+        camBtn.disabled = true;
+        const msg = document.getElementById('camMsg');
+        if (msg) {
+            msg.innerHTML = '<span class="text-warning">Camera skipped. You can still complete the interview without video analysis.</span>';
+        }
+        runTimer();
+    }
+});
+
+// Start Camera Button
+camBtn.addEventListener('click', async () => {
+    const btn = document.getElementById('camBtn');
+    const msg = document.getElementById('camMsg');
+    const vid = document.getElementById('videoEl');
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Starting...';
+    
+    try {
+        camStream = await navigator.mediaDevices.getUserMedia({
+            video: { width: 640, height: 480, facingMode: 'user' },
+            audio: true
+        });
+        
+        vid.srcObject = camStream;
+        startFrameCapture();
+        msg.innerHTML = '<span class="text-success">Camera active</span>';
+        btn.innerHTML = '<i class="fas fa-check"></i> Active';
+        btn.classList.remove('btn-success');
+        btn.classList.add('btn-outline-success');
+        
+    } catch(e) {
+        console.error(e);
+        msg.innerHTML = '<span class="text-danger">Error: ' + e.message + '</span>';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-redo"></i> Try Again';
+    }
+});
+
+// Timer
+function runTimer() {
+    clearInterval(timerId);
+    timerId = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(timerId);
+            document.getElementById('submitBtn').click();
+        } else {
+            timeLeft--;
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').textContent = m + ':' + s;
+            if (timeLeft <= 10) document.getElementById('timerDisplay').style.color = 'red';
+        }
+    }, 1000);
+}
+
+// Submit
+document.getElementById('submitBtn').addEventListener('click', async () => {
+    const text = document.getElementById('answerInput').value.trim();
+    const btn = document.getElementById('submitBtn');
+    
+    // Prevent multiple submissions
+    if (btn.disabled) return;
+    
+    // Validation
+    if (!text) {
+        alert('Please type your answer!');
+        return;
+    }
+    if (text.split(/\s+/).length < 5) {
+        alert('Please write at least 5 words!');
+        return;
+    }
+    
+    clearInterval(timerId);
+    if (captureInterval) clearInterval(captureInterval);
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+    
+    try {
+        const res = await fetch('/api/submit_answer/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                session_id: sessId,
+                question_id: qId,
+                answer_text: text,
+                face_frames: frames
+            })
+        });
+        
+        const data = await res.json();
+        
+        if (data.status === 'error') {
+            document.getElementById('msgArea').innerHTML = '<span class="text-danger">' + data.message + '</span>';
+            btn.disabled = false;
+            return;
+        }
+        
+        // Show scores
+        document.getElementById('relBar').style.width = (data.relevance * 100) + '%';
+        document.getElementById('lenBar').style.width = (data.length_score * 100) + '%';
+        document.getElementById('qualBar').style.width = (data.quality_score * 100) + '%';
+        
+        document.getElementById('msgArea').innerHTML = '<span class="text-success">Score: ' + Math.round(data.score) + '%</span>';
+        
+        setTimeout(() => nextQ(), 2000);
+        
+    } catch(e) {
+        console.error(e);
+        alert('Error: ' + e.message);
+        btn.disabled = false;
+    }
+});
+
+// Next Question
+async function nextQ() {
+    try {
+        const res = await fetch('/api/next_question/?session_id=' + sessId);
+        const data = await res.json();
+        
+        if (data.has_next) {
+            // Instead of reload, construct next question URL with session
+            const nextIndex = (data.current_index || 0) + 1;
+            window.location.href = '/interview/?q=' + nextIndex;
+        } else {
+            window.location.href = '/result/';
+        }
+    } catch(e) {
+        window.location.href = '/result/';
+    }
+}
+            
+            // Update question counter
+            const questionCounter = document.querySelector('small.text-muted');
+            if (questionCounter && data.current_index !== undefined) {
+                questionCounter.innerHTML = `Question ${data.current_index + 1}/{{ total_questions }} | Mode: {{ mode|upper }}`;
+            }
+            
+            // Reset input
+            document.getElementById('answerInput').value = '';
+            document.getElementById('msgArea').innerHTML = '';
+            
+            // Reset scores
+            document.getElementById('relBar').style.width = '0%';
+            document.getElementById('lenBar').style.width = '0%';
+            document.getElementById('qualBar').style.width = '0%';
+            
+            // Reset timer
+            timeLeft = modeStr === 'easy' ? 60 : modeStr === 'medium' ? 45 : 30;
+            const display = document.getElementById('timerDisplay');
+            display.style.color = 'black';
+            
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            display.textContent = m + ':' + s;
+            
+            // Reset frames
+            frames = [];
+            
+            // Enable submit button
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Answer';
+            
+            // Restart timer
+            runTimer();
+            
+        } else {
+            window.location.href = '/result/';
+        }
+    } catch(e) {
+        console.error('Error loading next question:', e);
+        window.location.href = '/result/';
+    }
+}
+</script>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+<!-- Messages Partial -->
+{% if messages %}
+<div class="messages-container position-fixed top-0 start-50 translate-middle-x" style="z-index: 9999; margin-top: 80px;">
+    {% for message in messages %}
+    <div class="alert alert-dismissible fade show mb-2 {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}"
+         role="alert"
+         style="min-width: 300px; max-width: 500px;">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Select Mode{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h2 class="text-center mb-4">Select Your Difficulty Level</h2>
+            <p class="text-center text-muted mb-5">Choose the mode that matches your current skill level</p>
+            
+            <form method="POST" id="modeForm">
+                {% csrf_token %}
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="mode-card mode-easy text-center p-4 h-100">
+                            <div class="mode-icon mb-3">
+                                <i class="fas fa-seedling fa-3x"></i>
+                            </div>
+                            <h3>Easy Mode</h3>
+                            <div class="mode-badge badge bg-success mb-3">For Beginners</div>
+                            <ul class="list-unstyled text-start">
+                                <li><i class="fas fa-check text-success me-2"></i> Basic HR questions</li>
+                                <li><i class="fas fa-check text-success me-2"></i> 60 seconds per answer</li>
+                                <li><i class="fas fa-check text-success me-2"></i> Hints available</li>
+                            </ul>
+                            <button type="submit" name="mode" value="easy" class="btn btn-success mt-3 w-100">
+                                Start Easy Mode
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="mode-card mode-medium text-center p-4 h-100 border-primary">
+                            <div class="mode-icon mb-3">
+                                <i class="fas fa-chart-line fa-3x text-primary"></i>
+                            </div>
+                            <h3>Medium Mode</h3>
+                            <div class="mode-badge badge bg-primary mb-3">Most Popular</div>
+                            <ul class="list-unstyled text-start">
+                                <li><i class="fas fa-check text-primary me-2"></i> Mixed technical + behavioral</li>
+                                <li><i class="fas fa-check text-primary me-2"></i> 45 seconds per answer</li>
+                                <li><i class="fas fa-check text-primary me-2"></i> Standard pace</li>
+                            </ul>
+                            <button type="submit" name="mode" value="medium" class="btn btn-primary mt-3 w-100">
+                                Start Medium Mode
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="mode-card mode-hard text-center p-4 h-100">
+                            <div class="mode-icon mb-3">
+                                <i class="fas fa-skull fa-3x"></i>
+                            </div>
+                            <h3>Hard Mode</h3>
+                            <div class="mode-badge badge bg-danger mb-3">For Experts</div>
+                            <ul class="list-unstyled text-start">
+                                <li><i class="fas fa-check text-danger me-2"></i> Advanced technical grilling</li>
+                                <li><i class="fas fa-check text-danger me-2"></i> 30 seconds per answer</li>
+                                <li><i class="fas fa-check text-danger me-2"></i> Curveball questions</li>
+                            </ul>
+                            <button type="submit" name="mode" value="hard" class="btn btn-danger mt-3 w-100">
+                                Start Hard Mode
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.mode-card {
+    border-radius: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+.mode-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+.mode-easy { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
+.mode-medium { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); }
+.mode-hard { background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); }
+.mode-icon i { font-size: 3rem; }
+.mode-badge { font-size: 0.8rem; padding: 5px 12px; border-radius: 20px; }
+</style>
+{% endblock %}

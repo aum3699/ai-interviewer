@@ -1,0 +1,50 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Database
+*.sqlite3
+*.db
+db.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Uploads
+media/
+data_dumps/
+
+# Static files
+staticfiles/
+
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Distribution
+build/
+dist/
+*.egg-info/
+.installed.cfg
+
+# Testing
+htmlcov/
+.coverage
+.pytest_cache/
+tox.ini
+.tox/
